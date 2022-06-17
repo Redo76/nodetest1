@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <title>User List</title>
+</head>
+
+<body>
+    <h1>User List</h1>
+    <ul>
+        <% 
+            var list = "" ; 
+            for (i=0; i < userlist.length; i++){ 
+                list += '<li><a href="#" onclick="showUser(\'' + userlist[i]._id + '\')">' + userlist[i].username + '</a>'
+                list += '<span style = "margin-left: 20px;"><a href="#" onclick="updateUser(\'' + userlist[i]._id + '\')">Update</a></span>';
+                list += '<span style = "margin-left: 20px;"><a href="/users/deleteuser/' + userlist[i]._id + '">Delete</a></span>';
+                list += '</li>'
+            }
+        %>
+        <%- list %>
+    </ul>
+    <form id="formAddUser" action="/users/adduser" method="post" name="formAddUser">
+        <input type="text" id="inputUserName" name="username" placeholder="username">
+        <input type="text" id="inputUserEmail" name="useremail" placeholder="email">
+        <input type="text" id="inputUserFullname" name="userfullname" placeholder="fullname">
+        <input type="text" id="inputUserAge" name="userage" placeholder="age">
+        <input type="text" id="inputUserLocation" name="userlocation" placeholder="location">
+        <input type="text" id="inputUserGender" name="usergender" placeholder="gender">
+        <input type="hidden" id="inputActionType" name="actiontype" value="add">
+        <input type="hidden" id="inputUpdateId" name="updateid" value="">
+        <button type="submit" id="btnSubmit">Submit</button>
+    </form>
+    <div id="showUser">
+        <strong>Name :</strong><span id="userInfoName"></span>
+        <strong>Age :</strong><span id="userInfoAge"></span>
+        <strong>Gender :</strong><span id="userInfoGender"></span>
+        <strong>Location :</strong><span id="userInfoLocation"></span>
+    </div>
+    <script type="text/javascript">    
+            function adduser(){
+                $('#inputUserName').val('');
+                $('#inputUserEmail').val('');
+                $('#inputUserFullName').val('');
+                $('#inputUserAge').val('');
+                $('#inputUserLocation').val('');
+                $('#inputUserGender').val('');
+                $('#inputActionType').val('');
+                $('#inputUpdateId').val('');
+                $('#inputUserName').focus();
+            }
+
+            function updateUser(id){
+                $.ajax({
+                    url : "/users/" + id,
+                    cache : false
+                })
+                .done(function(json){
+                    if (json != null){
+                        $('#inputUserName').val(json.username);
+                        $('#inputUserEmail').val(json.email);
+                        $('#inputUserFullname').val(json.fullname);
+                        $('#inputUserAge').val(json.age);
+                        $('#inputUserLocation').val(json.location);
+                        $('#inputUserGender').val(json.gender);
+                        $('#inputActionType').val("edit");
+                        $('#inputUpdateId').val(id);
+                        $('#inputUserName').focus();
+                    }
+                })
+            }
+
+            function showUser(id){
+                $.ajax({
+                    url : "/users/" + id,
+                    cache : false
+                })
+                .done(function(json){
+                    if (json != null){
+                        $('#userInfoName').html(json.fullname);
+                        $('#userInfoAge').html(json.age);
+                        $('#userInfoGender').html(json.location);
+                        $('#userInfoLocation').html(json.gender);
+                    }
+                })
+            }
+    </script>
+
+</body>
+
+</html>
+
